@@ -1,0 +1,7 @@
+---
+- name: Hold kubelet, kubeadm, kubectl at current version
+  become: true
+  ansible.builtin.dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop: "{{ install_kubeadm_packages }}"

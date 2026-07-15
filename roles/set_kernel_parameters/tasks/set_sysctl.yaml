@@ -1,0 +1,10 @@
+---
+- name: Apply required sysctl params for Kubernetes networking
+  become: true
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/99-kubernetes-cri.conf
+    reload: true
+  loop: "{{ set_kernel_parameters_sysctl | dict2items }}"
+  

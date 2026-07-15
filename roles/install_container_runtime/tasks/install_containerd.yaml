@@ -1,0 +1,24 @@
+---
+- name: Add Docker apt GPG key (containerd is published under Docker's repo)
+  become: true
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+
+- name: Add Docker apt repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [arch={{ 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}
+      signed-by=/etc/apt/keyrings/docker.asc]
+      https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    state: present
+    filename: docker
+
+- name: Install containerd.io package
+  become: true
+  ansible.builtin.apt:
+    name: containerd.io
+    state: "{{ 'latest' if install_container_runtime_containerd_version == 'latest' else 'present' }}"
+    update_cache: true

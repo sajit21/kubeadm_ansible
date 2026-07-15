@@ -1,0 +1,13 @@
+---
+- name: Install kubelet, kubeadm, kubectl packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ install_kubeadm_packages }}"
+    state: present
+    update_cache: true
+
+- name: Ensure kubelet is enabled
+  become: true
+  ansible.builtin.systemd:
+    name: kubelet
+    enabled: true

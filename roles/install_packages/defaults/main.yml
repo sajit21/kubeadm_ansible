@@ -1,0 +1,11 @@
+---
+install_packages_apt_packages:
+  - git
+  - curl
+  - gnupg
+  - ca-certificates
+  - apt-transport-https
+  - python3-pip
+
+install_packages_pip_packages:
+  - kubernetes

@@ -1,0 +1,3 @@
+---
+- name: Enable no password sudo for SSH user
+  ansible.builtin.include_tasks: enable_no_password_sudo.yaml

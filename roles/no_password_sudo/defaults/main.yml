@@ -1,0 +1,4 @@
+---
+no_password_sudo_sudoers_users:
+  - "{{ ansible_user }}"
+no_password_sudo_sudoers_groups: []

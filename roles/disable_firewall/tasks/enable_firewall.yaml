@@ -1,0 +1,19 @@
+---
+- name: Gather service facts
+  ansible.builtin.service_facts:
+
+- name: Set firewall services to check
+  ansible.builtin.set_fact:
+    disable_firewall_enable_firewall_services: "{{ ['firewalld', 'ufw', 'nftables', 'iptables'] }}"
+
+- name: Enable firewall services
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ firewall_service }}"
+    state: started
+    enabled: true
+  loop: "{{ disable_firewall_enable_firewall_services }}"
+  loop_control:
+    loop_var: firewall_service
+  when: firewall_service in ansible_facts.services and
+        ansible_facts.services[firewall_service].state != 'running'

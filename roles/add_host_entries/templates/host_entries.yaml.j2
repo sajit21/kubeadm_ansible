@@ -1,0 +1,16 @@
+{% set host_masters = add_host_entries_masters %}
+{% set host_workers = add_host_entries_workers %}
+
+{% for master in host_masters %}
+{{ master.ip }} {{ master.domain }}
+{% endfor %}
+
+{% for worker in host_workers %}
+{{ worker.ip }} {{ worker.domain }}
+{% endfor %}
+
+{% if harbors is defined %}
+{% for harbor in harbors %}
+{{ harbor.ip }} {{ harbor.domain }}
+{% endfor %}
+{% endif %}

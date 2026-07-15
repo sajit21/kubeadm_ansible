@@ -1,0 +1,14 @@
+---
+- name: Enable swap
+  become: true
+  ansible.builtin.command: swapon -a
+  register: disable_swap_enable_swap_result
+  changed_when: disable_swap_enable_swap_result.rc == 0
+  when: ansible_facts['swaptotal_mb'] == 0
+
+- name: Uncomment swap entry in fstab
+  become: true
+  ansible.builtin.replace:
+    path: /etc/fstab
+    regexp: '^#\s+(.*\sswap\s.*)$'
+    replace: '\1'

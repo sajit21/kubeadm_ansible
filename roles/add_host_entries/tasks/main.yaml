@@ -1,0 +1,10 @@
+---
+- name: Append hosts entries to /etc/hosts cleanly
+  become: true
+  ansible.builtin.blockinfile:
+    path: "/etc/hosts"
+    # We use lookup to render the template locally and push it directly as a block
+    block: "{{ lookup('template', 'host_entries.yaml.j2') }}"
+    marker: "# {mark} ANSIBLE MANAGED RKE2 HOSTS"
+    state: present
+    

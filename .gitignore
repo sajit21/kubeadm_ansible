@@ -1,0 +1,14 @@
+.venv/
+inventory/hosts.ini*
+
+# Ansible
+*.retry
+.vault_password
+vault_password.yml
+*.log
+*.pyc
+__pycache__/
+*.swp
+*.swo
+*~
+

@@ -1,0 +1,6 @@
+---
+- name: Install Python kubernetes library (needed for k8s modules)
+  become: true
+  ansible.builtin.pip:
+    name: "{{ install_packages_pip_packages }}"
+    state: present

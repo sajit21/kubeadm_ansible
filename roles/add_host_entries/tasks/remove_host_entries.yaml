@@ -1,0 +1,8 @@
+---
+- name: Remove hosts entries from /etc/hosts
+  become: true
+  ansible.builtin.blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} ANSIBLE MANAGED RKE2 HOSTS"
+    state: absent
+    

@@ -1,0 +1,9 @@
+---
+- name: Add Kubernetes apt repository
+  ansible.builtin.import_tasks: add_apt_repo.yaml
+
+- name: Install kubelet, kubeadm, kubectl
+  ansible.builtin.import_tasks: install_kubelet_kubeadm_kubectl.yaml
+
+- name: Pin package versions
+  ansible.builtin.import_tasks: hold_versions.yaml

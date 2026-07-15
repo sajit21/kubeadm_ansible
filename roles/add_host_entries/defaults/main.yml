@@ -1,0 +1,3 @@
+---
+add_host_entries_masters: "{{ masters }}"
+add_host_entries_workers: "{{ workers }}"

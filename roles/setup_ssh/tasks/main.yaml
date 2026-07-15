@@ -1,0 +1,17 @@
+---
+
+- name: Ensure .ssh directory exists on target
+  become: true
+  ansible.builtin.file:
+    path: "/home/{{ setup_ssh_ssh_user }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ setup_ssh_ssh_user }}"
+    group: "{{ setup_ssh_ssh_user }}"
+
+- name: Copy controller public key to remote node
+  become: true
+  ansible.posix.authorized_key:
+    user: "{{ setup_ssh_ssh_user }}"
+    state: present
+    key: "{{ lookup('file', setup_ssh_ssh_key_path) }}"

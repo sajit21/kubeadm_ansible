@@ -1,0 +1,7 @@
+---
+- name: Remove controller public key from remote node
+  become: true
+  ansible.posix.authorized_key:
+    user: "{{ setup_ssh_ssh_user }}"
+    state: absent
+    key: "{{ lookup('file', setup_ssh_ssh_key_path) }}"

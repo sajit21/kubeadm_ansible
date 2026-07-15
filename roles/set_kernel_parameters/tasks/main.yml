@@ -1,0 +1,6 @@
+---
+- name: Load required kernel modules
+  ansible.builtin.import_tasks: load_modules.yaml
+
+- name: Apply required sysctl parameters
+  ansible.builtin.import_tasks: set_sysctl.yaml

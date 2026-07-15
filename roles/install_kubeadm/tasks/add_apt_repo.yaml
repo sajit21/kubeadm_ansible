@@ -1,0 +1,16 @@
+---
+- name: Add Kubernetes apt GPG key
+  become: true
+  ansible.builtin.get_url:
+    url: "https://pkgs.k8s.io/core:/stable:/{{ install_kubeadm_version }}/deb/Release.key"
+    dest: /etc/apt/keyrings/kubernetes-apt-keyring.asc
+    mode: "0644"
+
+- name: Add Kubernetes apt repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.asc]
+      https://pkgs.k8s.io/core:/stable:/{{ install_kubeadm_version }}/deb/ /
+    state: present
+    filename: kubernetes

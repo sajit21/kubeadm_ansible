@@ -1,0 +1,6 @@
+---
+- name: Install containerd
+  ansible.builtin.import_tasks: install_containerd.yaml
+
+- name: Configure containerd
+  ansible.builtin.import_tasks: configure_containerd.yaml

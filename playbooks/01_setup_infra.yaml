@@ -1,0 +1,64 @@
+# 01_setup_infra.yaml
+# Base OS + runtime prep on every node (masters + workers) before any
+# kubeadm command is run.
+
+---
+- name: Infrastructure Setup
+  hosts: all
+  gather_facts: true
+  vars_files:
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/cluster.yaml"
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/hosts.yaml"
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/kubeadm.yaml"
+
+  tasks:
+    # Phase 1: Bootstrap and Access
+    - name: Bootstrap SSH access
+      ansible.builtin.include_role:
+        name: setup_ssh
+      tags: [bootstrap, ssh]
+
+    - name: Configure passwordless sudo
+      ansible.builtin.include_role:
+        name: no_password_sudo
+      tags: [bootstrap, sudo]
+
+    # Phase 2: Host Resolution
+    - name: Add /etc/hosts entries for cluster nodes
+      ansible.builtin.include_role:
+        name: add_host_entries
+      tags: [network, hosts]
+
+    # Phase 3: OS-Level Preparation
+    - name: Disable swap
+      ansible.builtin.include_role:
+        name: disable_swap
+      tags: [os-prep, swap]
+
+    - name: Disable firewall
+      ansible.builtin.include_role:
+        name: disable_firewall
+      tags: [os-prep, firewall]
+
+    - name: Set required kernel parameters and modules
+      ansible.builtin.include_role:
+        name: set_kernel_parameters
+      tags: [os-prep, kernel]
+
+    # Phase 4: Base Packages
+    - name: Install base packages (git, pip, k8s python lib)
+      ansible.builtin.include_role:
+        name: install_packages
+      tags: [packages]
+
+    # Phase 5: Container Runtime
+    - name: Install and configure containerd
+      ansible.builtin.include_role:
+        name: install_container_runtime
+      tags: [runtime, containerd]
+
+    # Phase 6: kubeadm/kubelet/kubectl
+    - name: Install kubeadm, kubelet, kubectl
+      ansible.builtin.include_role:
+        name: install_kubeadm
+      tags: [kubeadm, packages]

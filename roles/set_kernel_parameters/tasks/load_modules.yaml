@@ -1,0 +1,20 @@
+---
+- name: Ensure kernel modules load on boot
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/modules-load.d/kubeadm.conf
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      {% for module in set_kernel_parameters_modules %}
+      {{ module }}
+      {% endfor %}
+
+- name: Load kernel modules now
+  become: true
+  community.general.modprobe:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ set_kernel_parameters_modules }}"
+  

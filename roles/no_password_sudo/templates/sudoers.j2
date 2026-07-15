@@ -1,0 +1,14 @@
+
+{% if no_password_sudo_sudoers_users | length > 0 %}
+# Users with passwordless sudo
+{% for user in no_password_sudo_sudoers_users %}
+{{ user }} ALL=(ALL) NOPASSWD: ALL
+{% endfor %}
+{% endif %}
+
+{% if no_password_sudo_sudoers_groups | length > 0 %}
+# Groups with passwordless sudo
+{% for group in no_password_sudo_sudoers_groups %}
+%{{ group }} ALL=(ALL) NOPASSWD: ALL
+{% endfor %}
+{% endif %}

@@ -1,0 +1,6 @@
+---
+install_kubeadm_version: "{{ kubeadm.version | default('v1.31') }}"
+install_kubeadm_packages:
+  - kubelet
+  - kubeadm
+  - kubectl
