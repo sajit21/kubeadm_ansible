@@ -1,3 +1,4 @@
+```
 kubeadm-ansible/
 ├── ansible.cfg
 ├── inventory
@@ -135,3 +136,5 @@ kubeadm-ansible/
     ├── kubeadm.yaml.example
     ├── token
     └── token.example
+
+```
