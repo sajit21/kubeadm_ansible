@@ -1,23 +1,27 @@
 ---
-- name: Apply Tigera operator manifest
+- name: Wait for calico-node pods to be running
   become: true
-  kubernetes.core.k8s:
-    kubeconfig: "{{ setup_cni_kubeconfig }}"
-    src: "{{ setup_cni_operator_manifest_url }}"
-    state: present
+  ansible.builtin.command: >-
+    kubectl --kubeconfig={{ setup_cni_kubeconfig }}
+    -n calico-system get pods -l k8s-app=calico-node
+    -o jsonpath='{.items[*].status.phase}'
+  register: setup_cni_calico_pods
+  until: >-
+    setup_cni_calico_pods.stdout != '' and
+    'Pending' not in setup_cni_calico_pods.stdout and
+    'Failed' not in setup_cni_calico_pods.stdout
+  retries: 20
+  delay: 15
+  changed_when: false
 
-- name: Render Calico custom resources (IP pool matches kubeadm pod-subnet)
+- name: Wait for first master node to report Ready
   become: true
-  ansible.builtin.template:
-    src: calico-custom-resources.yaml.j2
-    dest: "{{ setup_cni_custom_resources_path }}"
-    owner: root
-    group: root
-    mode: "0644"
-
-- name: Apply Calico custom resources
-  become: true
-  kubernetes.core.k8s:
-    kubeconfig: "{{ setup_cni_kubeconfig }}"
-    src: "{{ setup_cni_custom_resources_path }}"
-    state: present
+  ansible.builtin.command: >-
+    kubectl --kubeconfig={{ setup_cni_kubeconfig }}
+    get node {{ inventory_hostname }}
+    -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}'
+  register: setup_cni_node_ready
+  until: setup_cni_node_ready.stdout == "True"
+  retries: 20
+  delay: 15
+  changed_when: false
