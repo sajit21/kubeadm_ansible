@@ -1,3 +1,9 @@
-#SPDX-License-Identifier: MIT-0
 ---
-# tasks file for install_packages
+- name: Install git and base packages
+  ansible.builtin.import_tasks: install_git.yaml
+
+- name: Ensure pip3 is present
+  ansible.builtin.import_tasks: install_pip.yaml
+
+- name: Install Python kubernetes library
+  ansible.builtin.import_tasks: install_kubernetes_pip_library.yaml

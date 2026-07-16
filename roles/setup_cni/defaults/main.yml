@@ -1,0 +1,5 @@
+---
+setup_cni_calico_version: "v3.27.0"
+setup_cni_operator_manifest_url: "https://raw.githubusercontent.com/projectcalico/calico/{{ setup_cni_calico_version }}/manifests/tigera-operator.yaml"
+setup_cni_kubeconfig: "{{ setup_first_master_admin_conf_path | default('/etc/kubernetes/admin.conf') }}"
+setup_cni_custom_resources_path: "/root/calico-custom-resources.yaml"

@@ -1,0 +1,12 @@
+---
+- name: Run kubeadm init on first control-plane node
+  ansible.builtin.import_tasks: kubeadm_init.yaml
+
+- name: Patch kube-vip static pod to use admin.conf post-bootstrap
+  ansible.builtin.import_tasks: patch_kubevip_kubeconfig.yaml
+
+- name: Configure kubectl access
+  ansible.builtin.import_tasks: configure_kubectl.yaml
+
+- name: Generate and fetch join commands for workers and additional masters
+  ansible.builtin.import_tasks: generate_join_commands.yaml

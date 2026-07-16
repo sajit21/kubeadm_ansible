@@ -1,5 +1,6 @@
 .venv/
-inventory/hosts.ini
+inventory/hosts.ini*
+roles/*/vars/*.yaml
 
 # Ansible
 *.retry

@@ -1,0 +1,13 @@
+---
+- name: Setup Worker Nodes
+  hosts: workers
+  gather_facts: true
+  vars_files:
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/cluster.yaml"
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/hosts.yaml"
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/kubeadm.yaml"
+  tasks:
+    - name: Join worker nodes to cluster
+      ansible.builtin.include_role:
+        name: setup_worker
+      tags: [worker, join]

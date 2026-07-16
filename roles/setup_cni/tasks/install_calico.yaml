@@ -1,0 +1,25 @@
+---
+- name: Check if Calico is already installed
+  ansible.builtin.command: kubectl get ns calico-system
+  register: calico_namespace
+  changed_when: false
+  failed_when: false
+
+- name: Download Calico manifest
+  ansible.builtin.get_url:
+    url: "{{ setup_cni_calico_url }}"
+    dest: /tmp/calico.yaml
+    mode: "0644"
+  when: calico_namespace.rc != 0
+
+- name: Apply Calico manifest
+  become: true
+  ansible.builtin.command: kubectl apply -f /tmp/calico.yaml
+  when: calico_namespace.rc != 0
+  register: calico_apply
+
+- name: Clean up Calico manifest
+  ansible.builtin.file:
+    path: /tmp/calico.yaml
+    state: absent
+  when: calico_namespace.rc != 0

@@ -1,0 +1,10 @@
+---
+- name: Join additional control-plane nodes
+  hosts: "masters[1:]"
+  gather_facts: true
+  serial: 1
+  tasks:
+    - name: Join as control-plane
+      ansible.builtin.include_role:
+        name: setup_other_masters
+      tags: [master, join]

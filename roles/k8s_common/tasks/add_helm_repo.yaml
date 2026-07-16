@@ -1,0 +1,6 @@
+---
+- name: "Add Helm repo: {{ k8s_common_helm_repo_name }}"
+  become: true
+  kubernetes.core.helm_repository:
+    name: "{{ k8s_common_helm_repo_name }}"
+    repo_url: "{{ k8s_common_helm_repo_url }}"

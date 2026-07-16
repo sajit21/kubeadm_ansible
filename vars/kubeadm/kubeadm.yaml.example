@@ -1,0 +1,6 @@
+---
+kubeadm:
+  version: v1.31
+  pod_cidr: 192.168.0.0/16
+  service_cidr: 10.96.0.0/12
+  cni: calico

@@ -1,8 +1,8 @@
+---
 # 01_setup_infra.yaml
 # Base OS + runtime prep on every node (masters + workers) before any
 # kubeadm command is run.
 
----
 - name: Infrastructure Setup
   hosts: all
   gather_facts: true

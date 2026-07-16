@@ -1,0 +1,23 @@
+---
+- name: Apply Tigera operator manifest
+  become: true
+  kubernetes.core.k8s:
+    kubeconfig: "{{ setup_cni_kubeconfig }}"
+    src: "{{ setup_cni_operator_manifest_url }}"
+    state: present
+
+- name: Render Calico custom resources (IP pool matches kubeadm pod-subnet)
+  become: true
+  ansible.builtin.template:
+    src: calico-custom-resources.yaml.j2
+    dest: "{{ setup_cni_custom_resources_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Apply Calico custom resources
+  become: true
+  kubernetes.core.k8s:
+    kubeconfig: "{{ setup_cni_kubeconfig }}"
+    src: "{{ setup_cni_custom_resources_path }}"
+    state: present

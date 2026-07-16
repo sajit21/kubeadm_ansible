@@ -1,0 +1,36 @@
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: ClusterConfiguration
+kubernetesVersion: "{{ kubeadm.version }}"
+controlPlaneEndpoint: "{{ kubeadm['control-plane-endpoint'] }}"
+networking:
+  podSubnet: "{{ kubeadm['pod-subnet'] }}"
+  serviceSubnet: "{{ kubeadm['service-subnet'] }}"
+controllerManager:
+  extraArgs:
+{% for k, v in kubeadm['kube-controller-manager-extra-args'].items() %}
+    {{ k }}: "{{ v }}"
+{% endfor %}
+scheduler:
+  extraArgs:
+{% for k, v in kubeadm['kube-scheduler-extra-args'].items() %}
+    {{ k }}: "{{ v }}"
+{% endfor %}
+---
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: InitConfiguration
+nodeRegistration:
+  criSocket: "{{ kubeadm['cri-socket'] }}"
+  kubeletExtraArgs:
+{% for arg in kubeadm['kubelet-extra-args'] %}
+{% set parts = arg.split('=', 1) %}
+    {{ parts[0] | regex_replace('^--', '') }}: "{{ parts[1] }}"
+{% endfor %}
+  taints:
+{% for taint in kubeadm['control-plane-taints'] %}
+    - key: "{{ taint.key }}"
+      effect: "{{ taint.effect }}"
+{% endfor %}
+---
+apiVersion: kubeadm.k8s.io/v1beta4
+kind: KubeProxyConfiguration
+metricsBindAddress: "{{ kubeadm['kube-proxy-extra-args']['metrics-bind-address'] }}"

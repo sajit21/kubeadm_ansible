@@ -1,0 +1,86 @@
+# ---
+# - name: Setup Calico CNI
+#   hosts: masters[0]
+#   gather_facts: true
+#   vars_files:
+#     - "{{ playbook_dir | dirname }}/vars/kubeadm/cluster.yaml"
+#     - "{{ playbook_dir | dirname }}/vars/kubeadm/hosts.yaml"
+#     - "{{ playbook_dir | dirname }}/vars/kubeadm/kubeadm.yaml"
+#   tasks:
+#     - name: Install Calico CNI
+#       ansible.builtin.include_role:
+#         name: setup_cni
+#       tags: [cni, calico]
+
+---
+- name: Setup Calico via Helm
+  hosts: masters[0]
+  gather_facts: true
+  vars_files:
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/cluster.yaml"
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/hosts.yaml"
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/kubeadm.yaml"
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/calico.yaml"
+
+  tasks:
+    - name: Create namespace for Tigera operator
+      ansible.builtin.include_role:
+        name: k8s_common
+        tasks_from: create_namespace.yaml
+      vars:
+        k8s_common_namespace: "{{ tigera.namespace }}"
+        k8s_common_namespace_labels: "{{ tigera.namespace_labels }}"
+
+    - name: Create namespace for Calico system
+      ansible.builtin.include_role:
+        name: k8s_common
+        tasks_from: create_namespace.yaml
+      vars:
+        k8s_common_namespace: "{{ calico.namespace }}"
+        k8s_common_namespace_labels: "{{ calico.namespace_labels }}"
+
+    - name: Add Calico Helm repo
+      ansible.builtin.include_role:
+        name: k8s_common
+        tasks_from: add_helm_repo.yaml
+      vars:
+        k8s_common_helm_repo_name: "{{ tigera.helm_repo_name }}"
+        k8s_common_helm_repo_url: "{{ tigera.helm_repo_url }}"
+
+    - name: Install Tigera operator via Helm
+      ansible.builtin.include_role:
+        name: k8s_common
+        tasks_from: install_helm_chart.yaml
+      vars:
+        k8s_common_helm_release_name: tigera-operator
+        k8s_common_helm_chart_ref: "{{ tigera.helm_repo_name }}/{{ tigera.chart_name }}"
+        k8s_common_helm_chart_version: "{{ tigera.chart_version }}"
+        k8s_common_helm_namespace: "{{ tigera.namespace }}"
+        k8s_common_kubeconfig: /etc/kubernetes/admin.conf
+
+    - name: Wait for Tigera Operator CRDs to be established
+      ansible.builtin.command:
+        cmd: >
+          kubectl wait crd/installations.operator.tigera.io
+          --for=condition=Established
+          --timeout=60s
+          --kubeconfig /etc/kubernetes/admin.conf
+      retries: 5
+      delay: 10
+      register: crd_wait
+      until: crd_wait.rc == 0
+      changed_when: false
+
+    - name: Install Calico Custom Resources
+      ansible.builtin.include_role:
+        name: k8s_common
+        tasks_from: apply_manifest.yaml
+      vars:
+        k8s_common_manifest: "{{ calico.installation_manifest }}"
+
+    - name: Apply Calico API Server manifest
+      ansible.builtin.include_role:
+        name: k8s_common
+        tasks_from: apply_manifest.yaml
+      vars:
+        k8s_common_manifest: "{{ calico.api_server_manifest }}"

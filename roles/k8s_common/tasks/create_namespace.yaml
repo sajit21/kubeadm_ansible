@@ -1,0 +1,12 @@
+---
+- name: "Create namespace: {{ k8s_common_namespace }}"
+  become: true
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_common_kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ k8s_common_namespace }}"
+        labels: "{{ k8s_common_namespace_labels | default({}) }}"

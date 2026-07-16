@@ -1,0 +1,35 @@
+---
+- name: Generate worker join command
+  become: true
+  ansible.builtin.command: kubeadm token create --print-join-command
+  register: setup_first_master_worker_join
+  changed_when: false
+
+- name: Generate control-plane join command (uses cert key from --upload-certs)
+  become: true
+  ansible.builtin.command: >-
+    kubeadm init phase upload-certs --upload-certs
+  register: setup_first_master_upload_certs
+  changed_when: false
+
+- name: Extract certificate key from upload-certs output
+  ansible.builtin.set_fact:
+    setup_first_master_cert_key: "{{ setup_first_master_upload_certs.stdout_lines[-1] }}"
+
+- name: Save worker join command to controller
+  ansible.builtin.copy:
+    content: "{{ setup_first_master_worker_join.stdout }}\n"
+    dest: "{{ setup_first_master_join_command_local_path }}"
+    mode: "0600"
+  delegate_to: localhost
+  become: false
+
+- name: Save control-plane join command to controller
+  ansible.builtin.copy:
+    content: >-
+      {{ setup_first_master_worker_join.stdout }}
+      --control-plane --certificate-key {{ setup_first_master_cert_key }}
+    dest: "{{ setup_first_master_cp_join_command_local_path }}"
+    mode: "0600"
+  delegate_to: localhost
+  become: false

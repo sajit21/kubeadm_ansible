@@ -1,0 +1,7 @@
+---
+- name: "Apply manifest: {{ k8s_common_manifest }}"
+  become: true
+  kubernetes.core.k8s:
+    kubeconfig: "{{ k8s_common_kubeconfig }}"
+    state: present
+    src: "{{ k8s_common_manifest }}"

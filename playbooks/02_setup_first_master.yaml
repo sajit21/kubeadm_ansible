@@ -1,0 +1,13 @@
+---
+- name: Setup First Master Node
+  hosts: masters[0]
+  gather_facts: true
+  vars_files:
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/cluster.yaml"
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/hosts.yaml"
+    - "{{ playbook_dir | dirname }}/vars/kubeadm/kubeadm.yaml"
+  tasks:
+    - name: Initialize first master with kubeadm
+      ansible.builtin.include_role:
+        name: setup_first_master
+      tags: [master, init]

@@ -1,0 +1,6 @@
+---
+- name: Join this node as a worker
+  ansible.builtin.import_tasks: kubeadm_join.yaml
+
+- name: Label worker node
+  ansible.builtin.import_tasks: label_worker_node.yaml

@@ -1,0 +1,12 @@
+---
+cluster:
+  project_name: CHANGE_ME
+  domain: CHANGE_ME.local
+  kubeconfig_path: /etc/kubernetes/admin.conf
+
+kubevip:
+  ip: CHANGE_ME
+  version: v0.8.0
+  interface: "{{ kubeadm.interface }}"
+
+default_storage_class: longhorn

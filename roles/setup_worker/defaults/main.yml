@@ -1,0 +1,4 @@
+---
+setup_worker_join_command_file: "{{ playbook_dir | dirname }}/vars/kubeadm/worker_join_command.sh"
+setup_worker_kubelet_conf_path: "/etc/kubernetes/kubelet.conf"
+setup_worker_node_label: "node-role.kubernetes.io/worker="

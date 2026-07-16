@@ -1,0 +1,8 @@
+---
+setup_first_master_kubeconfig_dest: "/home/{{ ansible_user }}/.kube/config"
+setup_first_master_admin_conf_path: "/etc/kubernetes/admin.conf"
+setup_first_master_kubevip_manifest_path: "/etc/kubernetes/manifests/kube-vip.yaml"
+
+# Where join commands get stashed on the controller for later playbooks to read
+setup_first_master_join_command_local_path: "{{ playbook_dir | dirname }}/vars/kubeadm/worker_join_command.sh"
+setup_first_master_cp_join_command_local_path: "{{ playbook_dir | dirname }}/vars/kubeadm/control_plane_join_command.sh"

@@ -1,0 +1,26 @@
+---
+- name: Ensure .kube directory exists for user
+  become: true
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/.kube"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0700"
+
+- name: Copy admin.conf to user's kube config
+  become: true
+  ansible.builtin.copy:
+    src: "{{ setup_first_master_admin_conf_path }}"
+    dest: "{{ setup_first_master_kubeconfig_dest }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0600"
+    remote_src: true
+
+- name: Fetch kubeconfig back to the Ansible controller
+  ansible.builtin.fetch:
+    src: "{{ setup_first_master_admin_conf_path }}"
+    dest: "{{ playbook_dir | dirname }}/vars/kubeadm/admin.conf"
+    flat: true
+  become: true

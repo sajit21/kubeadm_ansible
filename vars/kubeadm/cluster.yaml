@@ -1,0 +1,12 @@
+---
+cluster:
+  project_name: startsml_np
+  domain: startlocalnp # eg: startlocal, apple.local, google.dev
+  kubeconfig_path: /etc/kubernetes/admin.conf
+
+# kubevip:
+#   ip: CHANGE_ME
+#   version: v0.8.0
+#   interface: "{{ kubeadm.interface }}"
+
+# default_storage_class: longhorn

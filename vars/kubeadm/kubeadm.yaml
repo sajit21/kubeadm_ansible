@@ -1,0 +1,18 @@
+
+---
+kubeadm:
+  version: v1.30
+  pod-subnet: 192.168.0.0/16
+  service-subnet: 10.96.0.0/12
+  cni: calico
+  control-plane-endpoint: "{{ masters[0].ip }}"
+  cri-socket: "unix:///var/run/containerd/containerd.sock"
+  kubelet-extra-args:
+    - "node-ip={{ masters[0].ip }}"
+  control-plane-taints:
+    - key: "node-role.kubernetes.io/control-plane"
+      effect: "NoSchedule"
+  kube-controller-manager-extra-args: {}
+  kube-scheduler-extra-args: {}
+  kube-proxy-extra-args:
+    metrics-bind-address: "0.0.0.0:10249"
